@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 //sign in
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body
-    if (!email || !password) {
+    if (!email && !password) {
         return res.status(422).json({ error: "Kindly fill all the the fields" })
     }
     try {
@@ -51,8 +51,15 @@ router.post('/signin', async (req, res) => {
 
         if (userLogin) {
             const isMatch = await bcrypt.compare(password, userLogin.password)
-            const token = await userLogin.generateAuthToken(); //jwt
-            console.log(token) //jwt
+
+            //JWT
+            const token = await userLogin.generateAuthToken()
+            console.log(token)
+            res.cookie('jwt', token, {
+                expires: new Date(Date.now + 2589200000),
+                httpOnly: true
+            })
+            //JWT
 
             if (!isMatch) {
                 res.status(400).json({
@@ -70,8 +77,6 @@ router.post('/signin', async (req, res) => {
                 message: "Invalid Credentials"
             })
         }
-
-
     } catch (error) {
         console.log(error)
     }
