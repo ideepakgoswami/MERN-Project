@@ -56,8 +56,7 @@ router.post('/signin', async (req, res) => {
             const token = await userLogin.generateAuthToken()
             console.log(token)
             res.cookie('jwt', token, {
-                expires: new Date(Date.now + 2589200000),
-                httpOnly: true
+                maxAge: 2 * 60 * 60 * 1000, httpOnly: true
             })
             //JWT
 
